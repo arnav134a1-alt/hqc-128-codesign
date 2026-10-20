@@ -1,0 +1,29 @@
+# Build artifacts
+*.o
+*.obj
+*.exe
+bin/
+build/
+
+# Vivado / XSim artifacts
+*.log
+*.jou
+*.str
+*.wdb
+*.vcd
+*.pb
+*.dcp
+*.bit
+*.bin
+*.rpt
+.Xil/
+xsim.dir/
+*.sim/
+*.ip_user_files/
+*.hw/
+*.cache/
+
+# OS artifacts
+.DS_Store
+Thumbs.db
+desktop.ini
