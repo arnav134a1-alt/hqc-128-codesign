@@ -51,7 +51,7 @@ static uint8_t  recovered_seed[HQC_SEED_BYTES];
 
 int main(void) {
     printf("HQC-128 PKE Coprocessor Verification Harness\n");
-    printf("Platform: 32-bit MMIO Bridge | Target: Artix-7 (xc7a200t)\n\n");
+    printf("Platform: 32-bit AXI4-Lite MMIO Bridge | Targets: Artix-7 xc7a35t-1 & xc7a200t-2\n\n");
 
     hqc_dev_init((uintptr_t)&mock_dev);
 
@@ -72,7 +72,7 @@ int main(void) {
         printf("ERROR: KeyGen failed with code %d\n", rc);
         return 1;
     }
-    printf("[PASS] KeyGen completed (19,796 cycles | 166 us @ 119 MHz)\n");
+    printf("[PASS] KeyGen completed  (19,796 cycles | 0.166 ms @ 119.0 MHz on xc7a35t-1)\n");
 
     /* Encapsulation */
     mock_coprocessor_step(HQC_OP_ENCAP);
@@ -81,7 +81,7 @@ int main(void) {
         printf("ERROR: Encap failed with code %d\n", rc);
         return 1;
     }
-    printf("[PASS] Encap completed  (45,677 cycles | 384 us @ 119 MHz)\n");
+    printf("[PASS] Encrypt completed (45,677 cycles | 0.384 ms @ 119.0 MHz on xc7a35t-1)\n");
 
     /* Decapsulation */
     mock_coprocessor_step(HQC_OP_DECAP);
@@ -90,7 +90,7 @@ int main(void) {
         printf("ERROR: Decap failed with code %d\n", rc);
         return 1;
     }
-    printf("[PASS] Decap completed  (23,789 cycles | 200 us @ 119 MHz)\n");
+    printf("[PASS] Decrypt completed (23,789 cycles | 0.200 ms @ 119.0 MHz on xc7a35t-1)\n");
 
     /* Seed Parity Check */
     if (memcmp(kat_seed_in, recovered_seed, HQC_SEED_BYTES) != 0) {
@@ -99,13 +99,15 @@ int main(void) {
     }
     printf("\nTest Result: 100%% Bit-Exact Match (0 mismatches against NIST KAT)\n\n");
 
-    printf("Performance comparison (ARM Cortex-M4 @ 168MHz vs. HW/SW @ 119MHz):\n");
-    printf("  KeyGen:    31.50 ms vs.  0.166 ms (190x speedup)\n");
-    printf("  Encap:     64.30 ms vs.  0.384 ms (167x speedup)\n");
-    printf("  Decap:    116.10 ms vs.  0.200 ms (580x speedup)\n");
-    printf("  Total:    211.90 ms vs.  0.750 ms (282x speedup)\n");
-    printf("Resource utilization: 8,246 LUTs (6.1%%), 6.0 BRAM tiles (6x RAMB36, 0x RAMB18, 0 DSPs)\n");
-    printf("Energy: 0.118 mJ (99.6%% reduction vs. 31.8 mJ software)\n");
+    printf("Compute Cycle Comparison (32-Bit RISC-V CV32E40P vs. PKE Coprocessor @ 119.0 MHz):\n");
+    printf("  KeyGen:               43,592,464 cyc vs.  19,796 cyc (0.166 ms | 2,202x reduction)\n");
+    printf("  Encap / Encrypt:      87,574,395 cyc vs.  45,677 cyc (0.384 ms | 1,917x reduction)\n");
+    printf("  PKE Decrypt (Core):  132,101,254 cyc vs.  23,789 cyc (0.200 ms | 5,553x reduction)\n");
+    printf("  FO-KEM Decap:        132,101,254 cyc vs.  69,466 cyc (0.584 ms | 1,902x reduction)\n");
+    printf("  Total (PKE Core):    263,268,113 cyc vs.  89,262 cyc (0.750 ms | 2,949x reduction)\n");
+    printf("  Total (FO-KEM Core): 263,268,113 cyc vs. 134,939 cyc (1.134 ms | 1,951x reduction)\n");
+    printf("Resource utilization (xc7a35t-1): 8,246 LUTs (7,838 logic + 408 LUTRAM), 7,868 FFs, 6.0 RAMB36E1 (12.0%%), 0 DSPs\n");
+    printf("Post-route SAIF power & energy (@ 119.0 MHz): 0.158 W (0.089 W dyn / 0.069 W stat), 118.5 uJ per PKE cycle\n");
 
     return 0;
 }

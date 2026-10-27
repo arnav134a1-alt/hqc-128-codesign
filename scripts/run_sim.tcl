@@ -3,23 +3,25 @@
 
 set PROJECT_NAME "hqc_pke_sim"
 set TOP_MODULE   "tb_top_full"
-set PART         "xc7a200tfbg676-2"
+set PART         "xc7a35tcsg324-1"
 
 puts "== Creating in-memory project for ${TOP_MODULE} =="
 create_project -in_memory -part ${PART}
 
-# Add core RTL
+# Add core, AXI bridge, and RS-RM codec RTL
 add_files [glob hw/core/*.v]
 add_files [glob hw/axi/*.v]
 add_files [glob hw/codec/*.v]
-add_files [glob hw/sampler/*.v]
+set_property include_dirs [list "hw/codec"] [get_filesets sources_1]
+set_property include_dirs [list "hw/codec"] [get_filesets sim_1]
 
-# Add testbench
+# Add testbench and simulation vector memory files
 add_files -fileset sim_1 hw/tb/${TOP_MODULE}.v
+add_files -fileset sim_1 [glob sim/vectors/*.mem]
 set_property top ${TOP_MODULE} [get_filesets sim_1]
 
 # Set simulation parameters
-set_property -name {xsim.simulate.runtime} -value {500us} -objects [get_filesets sim_1]
+set_property -name {xsim.simulate.runtime} -value {1000us} -objects [get_filesets sim_1]
 
 # Run behavioral simulation
 puts "== Launching XSim =="

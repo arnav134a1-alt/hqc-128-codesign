@@ -7,21 +7,34 @@ build/
 
 # Vivado / XSim artifacts
 *.log
+!reports/*.log
 *.jou
 *.str
 *.wdb
 *.vcd
+*.saif
 *.pb
 *.dcp
 *.bit
 *.bin
 *.rpt
+!reports/*.rpt
 .Xil/
 xsim.dir/
 *.sim/
 *.ip_user_files/
 *.hw/
 *.cache/
+
+# LaTeX build intermediates (preserve paper/esl_paper.pdf)
+*.aux
+*.bbl
+*.blg
+*.fdb_latexmk
+*.fls
+*.out
+*.synctex.gz
+*.toc
 
 # OS artifacts
 .DS_Store

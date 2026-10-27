@@ -14,10 +14,10 @@ extern "C" {
 #define HQC_DATAPATH_WIDTH         64
 #define HQC_DENSE_WORDS           277   /* ceil(17669 / 64) */
 
-/* sparse vector weights */
+/* sparse vector weights (HQC-128: omega = 66, omega_r = omega_e = 75) */
 #define HQC_WEIGHT_Y               66
-#define HQC_WEIGHT_R1              66
-#define HQC_WEIGHT_R2              66
+#define HQC_WEIGHT_R1              75
+#define HQC_WEIGHT_R2              75
 #define HQC_WEIGHT_E               75
 
 #define HQC_SEED_BYTES             16

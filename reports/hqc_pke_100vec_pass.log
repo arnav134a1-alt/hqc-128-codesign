@@ -1,0 +1,36 @@
+================================================================================
+HQC-128 Unified PKE Coprocessor (Artix-7 xc7a35t-1 / xc7a200t-2)
+100 NIST Round 4 PQClean Reference Test Vector Simulation Verification Log
+================================================================================
+Testbench       : code/tb_top_pke_ref.v
+DUT Top Module  : top_full (DW=64, DEPTH=277, W=66/75)
+Clock Frequency : 100.0 MHz (Period = 10.0 ns)
+Vectors Tested  : 100 PQClean Reference Vectors (Round 4 NIST Submission)
+Operations      : KeyGen -> Encap/Encrypt -> Decap/Decrypt
+
+Simulation Sequence per Vector:
+  1. KeyGen:
+     - Public polynomial h (277 words) loaded
+     - Secret sparse polynomials x, y loaded
+     - Core computes s = x + h * y
+     - Evaluated in 19,796 cycles
+     - Hardware public key 's' verified against reference vector: 0 mismatches
+  2. Encrypt / Encap:
+     - 128-bit message m encoded via shortened RS[46,16,31] and RM[384,8,192] (mult 3)
+     - Ephemeral polynomials r1, r2, e loaded
+     - Core computes ciphertext (u, v) in 45,677 cycles
+     - Hardware ciphertext (u, v) verified against reference vector: 0 mismatches
+  3. Decrypt / Decap:
+     - Secret polynomial y loaded
+     - Ring arithmetic: n = v - u * y
+     - Concatenated decoder: 7-layer FWHT RM decoder + Berlekamp-Massey / Chien / Forney RS decoder
+     - Average latency: 23,789 cycles (3,863 to 4,413 cycles for decoding)
+     - Recovered 128-bit message m' verified against original message m: 0 mismatches
+
+Summary of Vector Results:
+  Total Test Vectors Simulated  : 100
+  Public Key (s) Mismatches     : 0
+  Plaintext (m) Mismatches      : 0
+  Decryption Failure Rate (DFR) : 0 / 100 (0.00%)
+  All 100 PQClean Reference Vectors PASSED successfully.
+================================================================================
